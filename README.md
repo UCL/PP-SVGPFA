@@ -26,4 +26,10 @@ to perform inference and learning in GPFA models.
 
 The python implementation heavily relies on [GPflow](https://github.com/GPflow/GPflow)
 
+
+### Demonstration
+
+Demonstration scripts for both (S)VGPFA and PP-SVGPFA can be found in `python/scripts/`
+
+
 ## Matlab

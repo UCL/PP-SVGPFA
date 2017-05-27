@@ -99,11 +99,13 @@ feed_dic = {Y:Ts_mat, mask:mask_mat}
 
 #---------------------------------------------------
 
+fig,axarr = plt.subplots(2,2,figsize=(10,8))
+
 print('Optimized variables:')
 for var in vars_e+vars_m+vars_h:
     print(var.name)  # Prints the name of the variable alongside its val
 
-nit = 500
+nit = 50
 loss_array = np.zeros((nit,))
 x = np.linspace(0,T,500).reshape(-1,1).astype(np_float_type)
 
@@ -119,49 +121,59 @@ if 'H' in OPT:
     print('1rst H_step')
     opt_h.minimize(sess, feed_dict=feed_dic)
 
-for i in range(1,nit):
+for it in range( nit):
     if 'E' in OPT:
-        print('E_step %d/%d '%(i,nit))
+        print('E_step %d/%d ' % (it, nit))
         opt_e.minimize(sess, feed_dict=feed_dic)
     if 'Z' in OPT:
-        print('Z_step %d/%d '%(i,nit))
+        print('Z_step %d/%d ' % (it, nit))
         opt_z.minimize(sess, feed_dict=feed_dic)
     if 'M' in OPT:
-        print('M_step %d/%d '%(i,nit))
+        print('M_step %d/%d ' % (it, nit))
         opt_m.minimize(sess, feed_dict=feed_dic)
     if 'H' in OPT:
-        print('H_step %d/%d '%(i,nit))
+        print('H_step %d/%d ' % (it, nit))
         opt_z.minimize(sess, feed_dict=feed_dic)
 
-
-    loss_array[i]= float(sess.run(loss, feed_dic))
+    loss_array[it]= float(sess.run(loss, feed_dic))
 
     Fs_mean,Fs_var = sess.run(m.build_predict_fs(x),  feed_dic)
+    Zs = sess.run(m.Zs,  feed_dic)
     y_mean,y_var = sess.run(m.predict_log_rates(x),  feed_dic)
+    ax = axarr[0,0]
     for d in range(D):
         for r in range(R):
             f,s =  Fs_mean[d,:,r],np.sqrt(Fs_var[d,:,r])
-            plt.plot(x,f,color=colors_d[d])
-            plt.plot(x,fs[d](x),color=colors_d[d],linestyle='--')
-            plt.fill_between(x.flatten(),f-s,y2=f+s,alpha=.3,facecolor=colors_d[d])
-    plt.xlabel('time (s)')
-    plt.title('true and inferred latents')
-    plt.savefig('%s_predict_latent.pdf'%model)
-    plt.close()
+            ax.vlines(Zs[d],ymin=f.min(),ymax=f.max(),color=colors_d[d],alpha=.05)
+            ax.plot(x,f,color=colors_d[d])
+            ax.plot(x,fs[d](x),color=colors_d[d],linestyle='--')
+            ax.fill_between(x.flatten(),f-s,y2=f+s,alpha=.3,facecolor=colors_d[d])
+    ax.set_xlabel('time (s)')
+    ax.set_title('true and inferred latents')
+    ax = axarr[0,1]
     for o in range(O):
         for r in range(R):
             y = y_mean[:, o, r]
-            plt.plot(log_rates[o](x).flatten(), y.flatten(), color=colors_o[o])
-    plt.xlabel('log rate (true)')
-    plt.xlabel('log rate (predicted)')
-    plt.savefig('%s_log_rates.pdf'%model)
-    plt.close()
+            ax.plot(log_rates[o](x).flatten(), y.flatten(), color=colors_o[o])
+    ax.plot([y_mean.min(),y_mean.max()],[y_mean.min(),y_mean.max()],'k--',linewidth=3,alpha=.5)
+    ax.set_xlabel('log rate (true)')
+    ax.set_ylabel('log rate (predicted)')
 
-plt.plot(loss_array,linewidth=3)
-plt.xlabel('iterations')
-plt.ylabel('Variational Objective')
-plt.savefig('%s_loss.pdf'%model)
-plt.close()
+    ax=axarr[1,0]
+    ax.plot(loss_array[:it], linewidth=3, color='blue')
+    ax.set_xlabel('iterations')
+    ax.set_ylabel('Variational Objective')
+
+    ax=axarr[1,1]
+    ax.imshow(y_mean[:, :, 0].T, interpolation='nearest',extent=[0,T,0,O],
+                                origin='lower', aspect='auto', cmap=cm.gray)
+    ax.set_xlabel('time')
+    ax.set_ylabel('neuron index')
+
+
+    fig.tight_layout()
+    fig.savefig('%s_results.pdf' % model)
+    plt.close()
 
 #=================================
 
