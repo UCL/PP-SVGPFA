@@ -1,3 +1,15 @@
+"""
+
+This script demonstrates the use of multiple algorithms to run learning and inference for GPFA using binned data.
+
+Algorithms are:
+- VGPFA: Variational Gaussian Process Factor Analysis
+- SVGPFA: Sparse Variational Gaussian Process Factor Analysis
+
+The framework is flexible and arbitrary likelihood may be used (Gaussian, Poisson...)
+
+"""
+
 import sys
 sys.path.append('../pp-SVGPFA')
 
@@ -49,7 +61,10 @@ print(X_np.shape, Y_np.shape, Preds_np.shape)
 
 plt.imshow(Rates_np[:,:,0].T,interpolation='nearest',origin='lower',aspect='auto',cmap=cm.gray)
 plt.colorbar()
-plt.savefig('svgpfa_sim.pdf')
+plt.title('binned raster plot')
+plt.xlabel('time')
+plt.ylabel('neuron index')
+plt.savefig('%s_sim.pdf'%model)
 plt.close()
 
 #---------------------------------------------------
@@ -140,16 +155,22 @@ for i in range(1,nit):
         y_mean,y_var = sess.run(m.predict_log_rates(X),  feed_dic)
         for d in range(D):
             for r in range(R):
-                f =  Fs_mean[d,:,r]
+                f, s = Fs_mean[d, :, r], np.sqrt(Fs_var[d, :, r])
                 plt.plot(x,f,color=colors_d[d])
                 plt.plot(x,fs[d](x),color=colors_d[d])
-        plt.savefig('svgpfa_add_prediction.pdf')
+                plt.fill_between(x.flatten(), f - s, y2=f + s, alpha=.3, facecolor=colors_d[d])
+        plt.xlabel('time (s)')
+        plt.title('true and inferred latents')
+        plt.savefig('%s_predict_latent.pdf' % model)
         plt.close()
         for o in range(O):
             for r in range(R):
                 y = y_mean[:,o,r]
                 plt.plot(Preds_np[:,o,r].flatten(),y.flatten(),color=colors_o[o])
-        plt.savefig('svgpfa_rate_rate.pdf')
+        plt.xlabel('log rate (true)')
+        plt.xlabel('log rate (predicted)')
+        plt.savefig('%s_log_rates.pdf' % model)
+
         plt.close()
 
 
