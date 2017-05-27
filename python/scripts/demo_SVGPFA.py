@@ -56,7 +56,6 @@ if lik == 'Poisson':
     Y_np = np.random.poisson(Rates_np)
 else:
     Y_np = Rates_np + np.random.randn(N, O, R)*.1
-print(X_np.shape, Y_np.shape, Preds_np.shape)
 
 
 plt.imshow(Rates_np[:,:,0].T,interpolation='nearest',extent=[0,T,0,O],
@@ -114,7 +113,7 @@ vars_h += tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='kernels')
 opt_e = soi(loss, var_list=vars_e,  method='L-BFGS-B', options={'ftol': 1e-4})
 opt_m = soi(loss, var_list=vars_m,  method='L-BFGS-B', options={'ftol': 1e-4})
 opt_z = soi(loss, var_list=vars_z,  method='L-BFGS-B', options={'ftol': 1e-4})
-opt_h = soi(loss, var_list=vars_h,  method='L-BFGS-B', options={'ftol': 1e-4})
+opt_h = soi(loss, var_list=vars_h,  method='L-BFGS-B', options={'ftol': 1e-2})
 
 init = tf.global_variables_initializer()
 sess.run(init) # reset values to wrong
@@ -131,9 +130,9 @@ print('Optimized variables:')
 for var in vars_e+vars_m+vars_h:
     print(var.name)  # Prints the name of the variable alongside its val
 
-nit = 50
+nit = 20
 loss_array = np.zeros((nit,))
-x = X_np.astype(np_float_type).reshape(-1,1)
+x = X_np[:,0].astype(np_float_type).reshape(-1,1)
 
 # declare which optimization to perform
 OPT = ['E','Z','M','H']
@@ -170,44 +169,45 @@ for it in range( nit):
 
     loss_array[it]= float(sess.run(loss, feed_dic))
 
-    Fs_mean,Fs_var = sess.run(m.build_predict_fs(x),  feed_dic)
-    y_mean,y_var = sess.run(m.predict_log_rates(x),  feed_dic)
-    Zs = sess.run(m.Zs,  feed_dic)
+Fs_mean,Fs_var = sess.run(m.build_predict_fs(x),  feed_dic)
+y_mean,y_var = sess.run(m.predict_log_rates(x),  feed_dic)
+Zs = sess.run(m.Zs,  feed_dic)
 
-    ax=axarr[0,0]
-    for d in range(D):
-        for r in range(R):
-            f,s =  Fs_mean[d,:,r],np.sqrt(Fs_var[d,:,r])
-            ax.vlines(Zs[d],ymin=f.min(),ymax=f.max(),color=colors_d[d],alpha=.05)
-            ax.plot(x,f,color=colors_d[d])
-            ax.plot(x,fs[d](x),color=colors_d[d],linestyle='--')
-            ax.fill_between(x.flatten(),f-s,y2=f+s,alpha=.3,facecolor=colors_d[d])
-    ax.set_xlabel('time (s)')
-    ax.set_title('true and inferred latents')
+ax=axarr[0,0]
+for d in range(D):
+    for r in range(R):
+        f,s =  Fs_mean[d,:,r],np.sqrt(Fs_var[d,:,r])
+        ax.vlines(Zs[d],ymin=f.min(),ymax=f.max(),color=colors_d[d],alpha=.05)
+        ax.plot(x,f,color=colors_d[d])
+        ax.plot(x,fs[d](x),color=colors_d[d],linestyle='--')
+        ax.fill_between(x.flatten(),f-s,y2=f+s,alpha=.3,facecolor=colors_d[d])
+ax.set_xlabel('time (s)')
+ax.set_title('true and inferred latents')
 
-    ax=axarr[0,1]
-    for o in range(O):
-        for r in range(R):
-            y = y_mean[:, o, r]
-            ax.plot(Preds_np[:,o,r].flatten(), y.flatten(), color=colors_o[o])
-    ax.plot([y_mean.min(),y_mean.max()],[y_mean.min(),y_mean.max()],'k--',linewidth=3,alpha=.5)
-    ax.set_xlabel('log rate (true)')
-    ax.set_ylabel('log rate (predicted)')
+ax=axarr[0,1]
+for o in range(O):
+    for r in range(R):
+        y = y_mean[:, o, r]
+        ax.plot(Preds_np[:,o,r].flatten(), y.flatten(), color=colors_o[o])
+ax.plot([y_mean.min(),y_mean.max()],[y_mean.min(),y_mean.max()],'k--',linewidth=3,alpha=.5)
+ax.set_xlabel('log rate (true)')
+ax.set_ylabel('log rate (predicted)')
 
-    ax=axarr[1,0]
-    ax.plot(loss_array[:it], linewidth=3, color='blue')
-    ax.set_xlabel('iterations')
-    ax.set_ylabel('Variational Objective')
+ax=axarr[1,0]
+ax.plot(loss_array[:it], linewidth=3, color='blue')
+ax.set_xlabel('iterations')
+ax.set_ylabel('Variational Objective')
 
-    ax=axarr[1,1]
-    ax.imshow(y_mean[:, :, 0].T, interpolation='nearest',extent=[0,T,0,O],
-                                origin='lower', aspect='auto', cmap=cm.gray)
-    ax.set_xlabel('time')
-    ax.set_ylabel('neuron index')
+ax=axarr[1,1]
+ax.imshow(y_mean[:, :, 0].T, interpolation='nearest',extent=[0,T,0,O],
+                            origin='lower', aspect='auto', cmap=cm.gray)
+ax.set_xlabel('time')
+ax.set_ylabel('neuron index')
 
-    fig.tight_layout()
-    fig.savefig('%s_results.pdf' % model)
-    plt.close()
+fig.tight_layout()
+fig.savefig('%s_results.pdf' % model)
+
+plt.close()
 
 #=================================
 
