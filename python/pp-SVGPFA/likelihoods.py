@@ -23,14 +23,6 @@ import numpy as np
 from quadrature import hermgauss
 
 
-def gauss_logp(variance, F, Y):
-    return gaussian(F, Y, variance)
-
-def gauss_var_exp(variance ,Fmu, Fvar, Y):
-    return -0.5 * np.log(2 * np.pi) - 0.5 * tf.log(variance) \
-               - 0.5 * (tf.square(Y - Fmu) + Fvar) / variance
-
-
 class Likelihood(object):
     def __init__(self):
         self.num_gauss_hermite_points = 20

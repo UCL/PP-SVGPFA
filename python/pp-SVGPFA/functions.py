@@ -38,8 +38,7 @@ def variational_expectations( Fmu, Fvar, phi, num_gauss_hermite_points=20):
         q(f) = N(Fmu, Fvar)
     then this method computes
        \int phi(f) q(f) df.
-    Here, we implement a default Gauss-Hermite quadrature routine, but some
-    likelihoods (Gaussian, Poisson) will implement specific cases.
+    Here, we implement a default Gauss-Hermite quadrature routine
     """
     gh_x, gh_w = hermgauss(num_gauss_hermite_points)
     gh_x = gh_x.reshape(1, -1)

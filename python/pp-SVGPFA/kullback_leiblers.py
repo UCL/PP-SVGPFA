@@ -134,43 +134,5 @@ def gauss_kl(q_mu, q_sqrt, K):
     LiLq = tf.matrix_triangular_solve(L_tiled, Lq, lower=True)
     KL += 0.5 * tf.reduce_sum(tf.square(LiLq))  # Trace term
     return KL
-#====================================
 
 
-
-def gauss_kl_uni(mu1,s1,mu2,s2):
-    """
-    Compute the KL between N(mu1,s1^2) and N(mu2,s2^2)
-
-    log s2/s1 + (s1^2 + (mu1-mu2)^2)/(2 s2^2) - 1/2
-    """
-    return tf.log(s2/s1) + .5*(tf.square(s1) + tf.square(mu1-mu2))/tf.square(s2) -.5
-
-def gauss_kl_old(q_mu, q1_sqrt, q2_sqrt):
-    """
-    Compute the KL divergence from
-
-          q(x) = N(q_mu, q_sqrt^2)
-    to
-          p(x) = N(0, K)
-
-    We assume multiple independent distributions, given by the columns of
-    q_mu and the last dimension of q_sqrt.
-
-    q_mu is a matrix, each column contains a mean.
-
-    q_sqrt is a 3D tensor, each matrix within is a lower triangular square-root
-        matrix of the covariance of q.
-
-    K is a positive definite matrix: the covariance of p.
-    """
-    alpha = tf.matrix_triangular_solve(q2_sqrt, q_mu, lower=True)
-    KL = 0.5 * tf.reduce_sum(tf.square(alpha))  # Mahalanobis term.
-    num_latent = 1
-    KL += num_latent * 0.5 * tf.reduce_sum(tf.log(tf.square(tf.diag_part(q2_sqrt))))  # Prior log-det term.
-    KL += -0.5 * tf.cast(tf.reduce_prod(tf.shape(q1_sqrt)[1:]), float_type)  # constant term
-    Lq = tf.matrix_band_part(q1_sqrt, -1, 0)  # force lower triangle
-    KL += -0.5*tf.reduce_sum(tf.log(tf.square(tf.matrix_diag_part(Lq))))  # logdet
-    LiLq = tf.matrix_triangular_solve(q2_sqrt, Lq, lower=True)
-    KL += 0.5 * tf.reduce_sum(tf.square(LiLq))  # Trace term
-    return KL
