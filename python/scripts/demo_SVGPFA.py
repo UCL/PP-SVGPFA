@@ -85,7 +85,7 @@ with tf.variable_scope("likelihood") as scope:
         likelihood = Gaussian(variance=.1)
     elif lik == 'Gaussian_link':
         likelihood = Gaussian_with_link(variance=.1, invlink=tf_link)
-Nz = [50 for _ in range(D)] # inducing points
+Nz = [30 for _ in range(D)] # inducing points
 Zs_np = [np.random.uniform(0,T,Nz[d_]).astype(np_float_type).reshape(-1,1) for d_ in range(D)]
 for d_ in range(D):
     with tf.variable_scope("ind_points%d"%d_) as scope:
@@ -131,12 +131,19 @@ print('Optimized variables:')
 for var in vars_e+vars_m+vars_h:
     print(var.name)  # Prints the name of the variable alongside its val
 
-nit = 500
+nit = 50
 loss_array = np.zeros((nit,))
 x = X_np.astype(np_float_type).reshape(-1,1)
 
 # declare which optimization to perform
 OPT = ['E','Z','M','H']
+# Optimization is performed using L-BFGS-B, iterating over different subsets of variable
+# - E: inference (as in classical EM)
+# - M: updates for loading C, offest d (as in classical EM)
+# - Z: update of inducing point locations
+# - H: kernel hyperparameter optimization
+
+
 print('Starting Optimization')
 opt_e.minimize(sess, feed_dict=feed_dic)
 if 'E' in OPT:

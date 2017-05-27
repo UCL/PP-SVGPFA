@@ -112,6 +112,12 @@ x = np.linspace(0,T,500).reshape(-1,1).astype(np_float_type)
 
 # declare which optimization to perform
 OPT = ['E','Z','M','H']
+# Optimization is performed using L-BFGS-B, iterating over different subsets of variable
+# - E: inference (as in classical EM)
+# - M: updates for loading C, offest d (as in classical EM)
+# - Z: update of inducing point locations
+# - H: kernel hyperparameter optimization
+
 print('Starting Optimization')
 opt_e.minimize(sess, feed_dict=feed_dic)
 if 'E' in OPT:
