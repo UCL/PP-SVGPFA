@@ -15,6 +15,17 @@ to perform inference and learning in GPFA models.
 * SVGPFA: Sparse Variational GPFA
 * pp-SVGPFA: Point Process Sparse Variational GPFA
 
+The most relevant available reference for the sparse additive algorthms is:
+```
+@inproceedings{adam2016scalable,
+  title={Scalable transformed additive signal decomposition by non-conjugate Gaussian process inference},
+  author={Adam, Vincent and Hensman, James and Sahani, Maneesh},
+  booktitle={Machine Learning for Signal Processing (MLSP), 2016 IEEE 26th International Workshop on},
+  pages={1--6},
+  year={2016},
+  organization={IEEE}
+}
+```
 
 ## Python
 
@@ -30,6 +41,7 @@ The python implementation heavily relies on [GPflow](https://github.com/GPflow/G
 ### Demonstration
 
 Demonstration scripts for both (S)VGPFA and PP-SVGPFA can be found in `python/scripts/`
+These consist in inference and learning on synthetic examples.
 
 
 ## Matlab
