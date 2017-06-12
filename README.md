@@ -45,3 +45,12 @@ These consist in inference and learning on synthetic examples.
 
 
 ## Matlab
+### Requirements (MATLAB R2014b or newer)
+* minFunc (included in /matlab/misc/)
+* mtimesx (included in /matlab/misc/)
+
+These contain mex files which need to be compiled in order for the code to work
+
+### Demonstration
+
+A demonstration script for a synthetic data example can be found in demo.m
