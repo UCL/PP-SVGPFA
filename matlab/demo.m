@@ -58,7 +58,7 @@ Z(2,:) = {linspace(.2,T,nZ2)'};
 Z(3,:) = {linspace(.2,T,nZ3)'};
 
 %% run ppGPFA optimization for all trials
-maxiter = 50; % maximum number of iterations to run
+maxiter = 10; % maximum number of iterations to run
 rnk = [1 1 1]; % rank of variational covariance parameterization S = L*L' + diag
 
 % to fix groups of parameters to their initial value:
@@ -86,9 +86,9 @@ end
 nn = 1;
 figure; 
 for ii = 1:dx
-    subplot(3,1,ii);plot(linspace(0.0, 20.0, 1000),fs{ii,nn}(linspace(0.0, 20.0, 1000)),'k','Linewidth',1.5);
-    hold on; plot(linspace(0.0, 20.0, 1000),mu_fs{nn}(:,ii),'Linewidth',1.5);
-    errorbarFill(linspace(0.0, 20.0, 1000), mu_fs{nn}(:,ii), sqrt(var_fs{nn}(:,ii)));
+    subplot(3,1,ii);plot(linspace(0.0, 20.0, ngrid),fs{ii,nn}(linspace(0.0, 20.0, ngrid)),'k','Linewidth',1.5);
+    hold on; plot(linspace(0.0, 20.0, ngrid),mu_fs{nn}(:,ii),'Linewidth',1.5);
+    errorbarFill(linspace(0.0, 20.0, ngrid), mu_fs{nn}(:,ii), sqrt(var_fs{nn}(:,ii)));
     hold on; plot(m.Z{ii,nn},min(mu_fs{nn}(:,ii))*ones(size(m.Z{ii,nn})),'r.','markersize',12)
     box off;
     xlim([0 T])
@@ -100,10 +100,10 @@ end
 xlabel('time')
 %% plot rates for a given trial and neuron
 nn = 1;
-figure; plot(linspace(0.0, 20, 1000),exp(mu_h{nn}(:,1:10)))
+figure; plot(linspace(0.0, 20, ngrid),exp(mu_h{nn}(:,1:10)))
 i = 12;
-plot(linspace(0.0, 20, 1000),exp(mu_h{nn}(:,i))); hold on;plot(linspace(0.0, 20, 1000),rates{i}(t),'k--');
-errorbarFill(linspace(0.0, 20, 1000), exp(mu_h{nn}(:,i)), ...
+plot(linspace(0.0, 20, ngrid),exp(mu_h{nn}(:,i))); hold on;plot(linspace(0.0, 20, ngrid),rates{i}(t),'k--');
+errorbarFill(linspace(0.0, 20, ngrid), exp(mu_h{nn}(:,i)), ...
     sqrt((exp(var_h{nn}(:,i))-1).*(exp(2*mu_h{nn}(:,i) + var_h{nn}(:,i)))));
 ylabel('spikes/sec')
 xlabel('time in seconds')
