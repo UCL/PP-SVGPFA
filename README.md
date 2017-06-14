@@ -15,7 +15,7 @@ to perform inference and learning in GPFA models.
 * SVGPFA: Sparse Variational GPFA
 * pp-SVGPFA: Point Process Sparse Variational GPFA
 
-The most relevant available reference for the sparse additive algorthms is:
+The most relevant available reference for the sparse additive algorithms is:
 ```
 @inproceedings{adam2016scalable,
   title={Scalable transformed additive signal decomposition by non-conjugate Gaussian process inference},
