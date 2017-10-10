@@ -21,9 +21,9 @@ end
 
 G = PeriodicKernel(prs,X1,X2);
 
-dd = bsxfun(@minus,X1,X2');
+dd = bsxfun(@minus,X1,permute(X2,[2 1 3]));
 rr = (pi.*dd./period);
 
-dKhprs(:,:,1) = 2*G/variance;
-dKhprs(:,:,2) = 4*G/lengthscale^3 .*sin(rr).^2;
-dKhprs(:,:,3) = 4*G*pi.*dd/period^2.*sin(rr)/lengthscale^2 .*cos(rr);
+dKhprs(:,:,1,:) = permute(2*G/variance,[1 2 4 3]);
+dKhprs(:,:,2,:) = permute(4*G/lengthscale^3 .*sin(rr).^2,[1 2 4 3]);
+dKhprs(:,:,3,:) = permute(4*G*pi.*dd/period^2.*sin(rr)/lengthscale^2 .*cos(rr),[1 2 4 3]);

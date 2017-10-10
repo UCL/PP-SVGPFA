@@ -1,14 +1,16 @@
 function prs = inducingPointMstep_singleTrial(m,ntr)
 
 % extract hyperparameters and inducing points for each latent process
-prs0 = cell2mat(m.Z(:,ntr));
+zz = cell2mat(m.Z);
+prs0 = zz(:,:,ntr);
 
 % make objective function
-fun = @(prs) inducingPointMstep_Objective(m,prs,ntr);
-
+fun = @(prs) inducingPointMstep_singleTrial_Objective(m,prs,ntr);
+% DerivCheck(fun,prs0);
 % run optimizer
-opts = optimset('Gradobj','on','display', 'none');
-opts.MaxIter = 20;
-prs = minFunc(fun,prs0,opts);
+optimopts = optimset('Gradobj','on','display', 'none');
+optimopts.MaxIter = m.opts.maxiter.inducingPointMstep;
+
+prs = minFunc(fun,prs0,optimopts);
 
 end

@@ -21,7 +21,7 @@ else
     end
 end
 % returns kernel Gram matrix
-ddist  = bsxfun(@minus,X1,X2').^2;
+ddist  = bsxfun(@minus,X1,permute(X2,[2 1 3])).^2;
 G = variance^2*exp(-0.5*ddist/lengthscale^2);
 
 end

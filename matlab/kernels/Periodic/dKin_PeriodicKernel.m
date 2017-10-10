@@ -20,18 +20,18 @@ else
 end
 
 G = PeriodicKernel(prs,X1,X2);
-dd = bsxfun(@minus,X1,X2');
+dd = bsxfun(@minus,X1,permute(X2,[2 1 3]));
 rr = (pi.*dd./period);
 
-dGin2 = zeros([size(G),length(X2)]);
+dGin2 = zeros([size(G,1),size(G,2),size(X2,1), size(G,3)]);
 
 if nargout > 1
-    dGin1 = zeros([size(G),length(X1)]);
+    dGin1 = zeros([size(G,1),size(G,2),size(X1,1), size(G,3)]);
 end
 
-for ii = 1:length(X2);
-    dGin2(:,ii,ii) = 4*pi/period*G(:,ii)/lengthscale^2 .* ...
-        sin(rr(:,ii)).*cos(rr(:,ii));
+for ii = 1:size(X2,1)
+    dGin2(:,ii,ii,:) = permute(4*pi/period*G(:,ii,:)/lengthscale^2 .* ...
+        sin(rr(:,ii,:)).*cos(rr(:,ii,:)),[1 2 4 3]);
 end
 
 
@@ -39,13 +39,13 @@ end
 if nargout > 1
     for ii = 1:length(X1)
         if nargin == 2 % grad wrt to first input if same
-            dGin1(ii,:,ii) = -4*pi/period*G(ii,:)/lengthscale^2 .* ...
-                sin(rr(ii,:)).*cos(rr(ii,:));
-            dGin1(:,ii,ii) = 4*pi/period*G(:,ii)/lengthscale^2 .* ...
-                sin(rr(:,ii)).*cos(rr(:,ii));
+            dGin1(ii,:,ii,:) = permute(-4*pi/period*G(ii,:,:)/lengthscale^2 .* ...
+                sin(rr(ii,:,:)).*cos(rr(ii,:,:)),[1 2 4 3]);
+            dGin1(:,ii,ii,:) = permute(4*pi/period*G(:,ii,:)/lengthscale^2 .* ...
+                sin(rr(:,ii,:)).*cos(rr(:,ii,:)),[1 2 4 3]);
         else % grad wrt first input if different
-            dGin1(ii,:,ii) = -4*pi/period*G(ii,:)/lengthscale^2 .* ...
-                sin(rr(ii,:)).*cos(rr(ii,:));
+            dGin1(ii,:,ii,:) = permute(-4*pi/period*G(ii,:,:)/lengthscale^2 .* ...
+                sin(rr(ii,:,:)).*cos(rr(ii,:,:)),[1 2 4 3]);
         end
     end
 end

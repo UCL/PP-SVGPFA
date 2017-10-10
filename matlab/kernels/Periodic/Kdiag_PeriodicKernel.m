@@ -11,7 +11,7 @@ if isempty(X1)
 end
 
 Gdiag = variance^2*ones(size(X1));
-dGdiag(:,:,1) = 2*Gdiag/variance;
-dGdiag(:,:,2) = zeros(size(Gdiag));
-dGdiag(:,:,3) = zeros(size(Gdiag));
+dGdiag(:,:,1,:) = permute(2*Gdiag/variance,[1 2 4 3]);
+dGdiag(:,:,2,:) = permute(zeros(size(Gdiag)),[1 2 4 3]);
+dGdiag(:,:,3,:) = permute(zeros(size(Gdiag)),[1 2 4 3]);
 

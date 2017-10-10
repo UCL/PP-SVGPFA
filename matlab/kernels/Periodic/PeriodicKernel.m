@@ -19,7 +19,7 @@ else
 end
 
 % returns kernel Gram matrix and derivative wrt hyperparameters
-dd = bsxfun(@minus,X1,X2');
+dd = bsxfun(@minus,X1,permute(X2,[2 1 3]));
 
 rr = (pi.*dd./period);
 G = variance^2*exp(-2*sin(rr).^2/lengthscale^2);
