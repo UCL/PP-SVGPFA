@@ -45,7 +45,7 @@ These consist in inference and learning on synthetic examples.
 
 
 ## Matlab
-### Requirements (MATLAB R2014b or newer)
+### Requirements (MATLAB R2016b)
 * [minFunc](https://www.cs.ubc.ca/~schmidtm/Software/minFunc.html) (included in /matlab/misc/)
 * [mtimesx](https://www.mathworks.com/matlabcentral/fileexchange/25977-mtimesx-fast-matrix-multiply-with-multi-dimensional-support) (included in /matlab/misc/)
 
@@ -53,4 +53,4 @@ These contain mex files which need to be compiled in order for the code to work
 
 ### Demonstration
 
-A demonstration script for a synthetic data example can be found in demo.m
+A demonstration scripts for a synthetic data example can be found in demo.m
