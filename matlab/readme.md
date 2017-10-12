@@ -2,6 +2,18 @@ This repository contains MATLAB code to run sparse variational Gaussian Process 
 
 The code contains two useful packages for the optimisation routines and for faster computation of tensor products in MATLAB.
 
+supported likelihoods:
+* Gaussian
+* Poisson (exponential non-linearity)
+* Point Process (exponential non-linearity)
+
+supported covariance functions
+* RBF
+* Periodic
+* Locally Periodic
+* Matern 3/2
+* Matern 5/2
+* Rational Quadratic
 
 Thanks to:
 
