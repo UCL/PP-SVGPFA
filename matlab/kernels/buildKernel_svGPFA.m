@@ -23,27 +23,40 @@ switch name
         
     case 'LocallyPeriodic'
         
-        error('not implemented yet')
-        
-        kern.numhprs = 3;
+        kern.numhprs = 4;
         kern.hprs = hprs;
-        kern.K = str2func('LocallyPeriodicKernel');
+        kern.K = @LocallyPeriodicKernel;
+        kern.Kdiag = @Kdiag_LocallyPeriodicKernel;
+        kern.dKhprs = @dKhprs_LocallyPeriodicKernel;
+        kern.dKin = @dKin_LocallyPeriodicKernel;
         
-    case 'Matern'
+    case 'Matern32'
         
-        error('not implemented yet')
-        
-        kern.numhprs = 3;
+        kern.numhprs = 2;
         kern.hprs = hprs;
-        kern.K = str2func('MaternKernel');
+        kern.K = @matern32Kernel;
+        kern.Kdiag = @Kdiag_matern32Kernel;
+        kern.dKhprs = @dKhprs_matern32Kernel;
+        kern.dKin = @dKin_matern32Kernel;
+        
+    case 'Matern52'
+        
+        kern.numhprs = 2;
+        kern.hprs = hprs;
+        kern.K = @matern52Kernel;
+        kern.Kdiag = @Kdiag_matern52Kernel;
+        kern.dKhprs = @dKhprs_matern52Kernel;
+        kern.dKin = @dKin_matern52Kernel;
         
     case 'RationalQuadratic'
         
-        error('not implemented yet')
-        
         kern.numhprs = 3;
         kern.hprs = hprs;
-        kern.K = str2func('RationalQuadraticKernel');
+        kern.K = @RationalQuadraticKernel;
+        kern.Kdiag = @Kdiag_RationalQuadraticKernel;
+        kern.dKhprs = @dKhprs_RationalQuadraticKernel;
+        kern.dKin = @dKin_RationalQuadraticKernel;
+        
     case 'Linear'
         
         error('not implemented yet')
