@@ -1,11 +1,11 @@
 This repository contains MATLAB code to run sparse variational Gaussian Process Factor Analysis (svGPFA).
 
-##supported likelihoods:
+## supported likelihoods:
 * Gaussian
 * Poisson (exponential non-linearity)
 * Point Process (exponential non-linearity)
 
-##supported covariance functions
+## supported covariance functions
 * RBF
 * Periodic
 * Locally Periodic
